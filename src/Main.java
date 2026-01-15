@@ -2,7 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class main {
+public class Main {
 
     static String JDBC_URL = "jdbc:postgresql://localhost:5432/SimpleDB?currentSchema=public&user=postgres&password=0000";
 
