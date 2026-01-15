@@ -9,6 +9,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         var connection = DriverManager.getConnection(JDBC_URL);
+        CreateTable(connection);
+
+        InsertValues(connection);
+
         var selectSQL = "SELECT * FROM users";
         var statement = connection.createStatement();
         var resultSet = statement.executeQuery(selectSQL);
@@ -18,9 +22,16 @@ public class Main {
 
     }
 
-    private static void CreateTableTasks(Connection connection) throws SQLException {
+    private static void InsertValues(Connection connection) throws SQLException {
+        var insertSQL = "insert into users(name) values(?)";
+        var preparedStatement = connection.prepareStatement(insertSQL);
+        preparedStatement.setString(1 , "Sakebay");
+        preparedStatement.execute();
+    }
+
+    private static void CreateTable(Connection connection) throws SQLException {
         var statement = connection.createStatement();
-        var createTableStatement = "CREATE TABLE TASKS (id SERIAL PRIMARY KEY, name VARCHAR(255))";
+        var createTableStatement = "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name VARCHAR(255))";
         statement.execute(createTableStatement);
     }
 }
