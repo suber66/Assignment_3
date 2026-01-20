@@ -1,5 +1,6 @@
 import models.DataManager;
 import models.Game;
+import models.User;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -8,19 +9,21 @@ public class Controller {
     static public void Start() throws SQLException {
         Scanner sc = new Scanner(System.in);
         boolean run = true;
-        System.out.println("Welcome! Choose operation:\n1:Show All Games\n2:Show Games of certain User\n3:Own certain Game to certain User\n4:Exit");
+        System.out.println("Welcome!");
         while (run) {
-            System.out.print("> ");
+            System.out.print(" Choose operation:\n1:Show All Games\n2:Show Games of certain User\n3:Own certain Game to certain User\n4:Exit\n> ");
             int input = sc.nextInt();
             switch (input) {
                 case 1:
                     ShowAllGames();
                     break;
                 case 2:
+                    ShowAllUsers();
                     System.out.println("Choose User ID");
                     AllUserGames(sc.nextInt());
                     break;
                 case 3:
+                    ShowAllUsers();
                     System.out.println("Choose User ID");
                     int UserID = sc.nextInt();
                     UnownedUserGames(UserID);
@@ -42,6 +45,13 @@ public class Controller {
         DataManager dm = new DataManager();
         for (Game game: dm.getAllGames()) {
             System.out.println(game);
+
+        }
+    }
+    static public void ShowAllUsers() {
+        DataManager dm = new DataManager();
+        for (User user: dm.getAllUsers()) {
+            System.out.println(user);
 
         }
     }

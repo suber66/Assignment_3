@@ -86,6 +86,9 @@ public class DataManager {
     public Iterable<Game> getAllGames () {
         return gameByID.values();
     }
+    public Iterable<User> getAllUsers () {
+        return userByID.values();
+    }
 
 
 
