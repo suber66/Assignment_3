@@ -9,9 +9,12 @@ public class Controller {
     static public void Start() throws SQLException {
         Scanner sc = new Scanner(System.in);
         boolean run = true;
+        int UserID;
+        int GameID;
+        String UserNickname;
         System.out.println("Welcome!");
         while (run) {
-            System.out.print(" Choose operation:\n1:Show All Games\n2:Show Games of certain User\n3:Buy Game to certain User\n4:Add User\n5:Exit\n> ");
+            System.out.print(" Choose operation:\n1:Show All Games\n2:Show Games of certain User\n3:Buy Game to certain User\n4:Add User\n5:Change nickname\n6:Exit\n> ");
             int input = sc.nextInt();
             switch (input) {
                 case 1:
@@ -25,17 +28,26 @@ public class Controller {
                 case 3:
                     ShowAllUsers();
                     System.out.println("Choose User ID");
-                    int UserID = sc.nextInt();
+                    UserID = sc.nextInt();
                     UnownedUserGames(UserID);
                     System.out.println("Choose Game ID");
-                    int GameID = sc.nextInt();
+                    GameID = sc.nextInt();
                     BuyGame(GameID,UserID);
                     break;
                 case 4:
                     System.out.println("Write your nickname");
-                    AddUser(sc.next());
+                    UserNickname = sc.next();
+                    AddUser(UserNickname);
                     break;
                 case 5:
+                    ShowAllUsers();
+                    System.out.println("Choose user ID");
+                    UserID = sc.nextInt();
+                    System.out.println("Write new nickname");
+                    UserNickname = sc.next();
+                    UpdateNickname(UserID,UserNickname);
+                    break;
+                case 6:
                     run = false;
                     break;
                 default:
@@ -114,5 +126,10 @@ public class Controller {
         DataManager dm = new DataManager();
         dm.AddUser(nickname);
         System.out.println("User successfully added");
+    }
+    static public void UpdateNickname (int id, String new_nickname) {
+        DataManager dm = new DataManager();
+        dm.UpdateNickname(id, new_nickname);
+        System.out.println("Nickname successfully changed");
     }
 }

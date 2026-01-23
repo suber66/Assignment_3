@@ -119,11 +119,31 @@ public class DataManager {
             double price = resultset.getDouble("price");
             var updateSQL = "UPDATE users SET money_spent = ? WHERE id = ?";
             var preparedUpdateStatement = con.prepareStatement(updateSQL);
-            System.out.println(getUserByID(userID).getMoney_spent()+price);
             double new_money_spent = getUserByID(userID).getMoney_spent()+price;
             preparedUpdateStatement.setDouble(1, new_money_spent);
             preparedUpdateStatement.setInt(2, userID);
             preparedUpdateStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println("could not close the connection: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    public void UpdateNickname(int id, String new_nickname){
+        try {
+            con = DriverManager.getConnection(JDBC_URL);
+            var updateSQL = "UPDATE users SET nickname = ? WHERE id = ?";
+            var preparedStatement = con.prepareStatement(updateSQL);
+            preparedStatement.setString(1, new_nickname);
+            preparedStatement.setInt(2, id);
+            preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
