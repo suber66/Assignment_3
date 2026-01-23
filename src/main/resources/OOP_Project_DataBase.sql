@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS public.users
 (
     id serial NOT NULL,
     nickname character varying(255) COLLATE pg_catalog."default",
+    money_spent numeric(5, 2),
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 

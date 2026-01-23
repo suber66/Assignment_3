@@ -11,7 +11,7 @@ public class Controller {
         boolean run = true;
         System.out.println("Welcome!");
         while (run) {
-            System.out.print(" Choose operation:\n1:Show All Games\n2:Show Games of certain User\n3:Own certain Game to certain User\n4:Exit\n> ");
+            System.out.print(" Choose operation:\n1:Show All Games\n2:Show Games of certain User\n3:Buy Game to certain User\n4:Add User\n5:Exit\n> ");
             int input = sc.nextInt();
             switch (input) {
                 case 1:
@@ -29,9 +29,13 @@ public class Controller {
                     UnownedUserGames(UserID);
                     System.out.println("Choose Game ID");
                     int GameID = sc.nextInt();
-                    OwnGame(GameID,UserID);
+                    BuyGame(GameID,UserID);
                     break;
                 case 4:
+                    System.out.println("Write your nickname");
+                    AddUser(sc.next());
+                    break;
+                case 5:
                     run = false;
                     break;
                 default:
@@ -95,5 +99,20 @@ public class Controller {
                 dm.AddOwnedGame(gameID,userID);
                 System.out.println("You successfully own this game");
         }
+    }
+    static public void BuyGame (int gameID,int userID) throws SQLException {
+        DataManager dm = new DataManager();
+        if (dm.getUserByID(userID).getOwnedGames().contains(dm.getGameByID(gameID))) {
+            System.out.println("You already own this game");
+        }
+        else {
+            dm.BuyGame(gameID,userID);
+            System.out.println("You successfully buy this game");
+        }
+    }
+    static public void AddUser (String nickname) {
+        DataManager dm = new DataManager();
+        dm.AddUser(nickname);
+        System.out.println("User successfully added");
     }
 }

@@ -22,7 +22,8 @@ public class DataManager {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String nickname = resultSet.getString("nickname");
-                User user = new User(id,nickname,con);
+                double money_spent = resultSet.getDouble("money_spent");
+                User user = new User(id,nickname,money_spent,con);
                 userByID.put(id,user);
             }
             selectSQL = "SELECT * FROM games";
@@ -70,6 +71,59 @@ public class DataManager {
             preparedStatement.setInt(1, gameID);
             preparedStatement.setInt(2, userID);
             preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println("could not close the connection: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    public void AddUser (String user_nickname) {
+        try {
+            con = DriverManager.getConnection(JDBC_URL);
+            var insertSQL = "INSERT INTO users(nickname) VALUES (?)";
+            var preparedStatement = con.prepareStatement(insertSQL);
+            preparedStatement.setString(1, user_nickname);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println("could not close the connection: " + e.getMessage());
+                }
+            }
+        }
+    }
+    public void BuyGame (int gameID,int userID) {
+        try {
+            con = DriverManager.getConnection(JDBC_URL);
+            var insertSQL = "INSERT INTO ownedgames(game_id, user_id) VALUES (?, ?)";
+            var preparedStatement = con.prepareStatement(insertSQL);
+            preparedStatement.setInt(1, gameID);
+            preparedStatement.setInt(2, userID);
+            preparedStatement.execute();
+            var selectSQL = "SELECT price FROM games WHERE id = ?";
+            var preparedSelectStatement = con.prepareStatement(selectSQL);
+            preparedSelectStatement.setInt(1, gameID);
+            var resultset = preparedSelectStatement.executeQuery();
+            resultset.next();
+            double price = resultset.getDouble("price");
+            var updateSQL = "UPDATE users SET money_spent = ? WHERE id = ?";
+            var preparedUpdateStatement = con.prepareStatement(updateSQL);
+            System.out.println(getUserByID(userID).getMoney_spent()+price);
+            double new_money_spent = getUserByID(userID).getMoney_spent()+price;
+            preparedUpdateStatement.setDouble(1, new_money_spent);
+            preparedUpdateStatement.setInt(2, userID);
+            preparedUpdateStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {

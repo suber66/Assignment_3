@@ -7,11 +7,13 @@ import java.util.HashSet;
 public class User {
     private int id;
     private String nickname;
+    private double money_spent;
     private HashSet<Game> OwnedGames = new HashSet<>();
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+    public void setMoney_spent(double money_spent) { this.money_spent = money_spent; }
     public void setOwnedGames(HashSet<Game> OwnedGames) {
         this.OwnedGames = OwnedGames;
     }
@@ -25,15 +27,19 @@ public class User {
     public String getNickname() {
         return nickname;
     }
+    public double getMoney_spent() {
+        return money_spent;
+    }
     public HashSet<Game> getOwnedGames() {
         return OwnedGames;
     }
 
 
-    public User(int id, String nickname, Connection con)throws SQLException {
+    public User(int id, String nickname, double money_spent, Connection con)throws SQLException {
         this.id = id;
         this.nickname = nickname;
-        var selectSQL = "SELECT game_id, name, price, user_id, nickname FROM public.ownedgames JOIN users ON ownedgames.user_id = users.id JOIN games ON ownedgames.game_id = games.id WHERE user_id = ?";
+        this.money_spent = money_spent;
+        var selectSQL = "SELECT game_id, name, price FROM public.ownedgames JOIN users ON ownedgames.user_id = users.id JOIN games ON ownedgames.game_id = games.id WHERE user_id = ?";
         var preparedStatement = con.prepareStatement(selectSQL);
         preparedStatement.setInt(1,id);
         var resultSet = preparedStatement.executeQuery();
@@ -48,7 +54,7 @@ public class User {
 
     @Override
     public String toString() {
-        return id + ": " + nickname;
+        return id + ": " + nickname + " Money spent: $" + money_spent;
     }
 
 
