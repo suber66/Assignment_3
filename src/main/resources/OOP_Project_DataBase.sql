@@ -3,12 +3,37 @@
 BEGIN;
 
 
+CREATE TABLE IF NOT EXISTS public.admins
+(
+    id serial NOT NULL,
+    user_id integer NOT NULL,
+    CONSTRAINT admins_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.developedgames
+(
+    id serial NOT NULL,
+    developer_id integer NOT NULL,
+    game_id integer NOT NULL,
+    CONSTRAINT developedgames_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.developers
+(
+    id serial NOT NULL,
+    user_id integer NOT NULL,
+    money_gained numeric(10, 2) NOT NULL DEFAULT 0,
+    CONSTRAINT developers_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS public.games
 (
     id serial NOT NULL,
-    name character varying COLLATE pg_catalog."default",
-    price numeric(5, 2),
-    CONSTRAINT games_pkey PRIMARY KEY (id)
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    price numeric(5, 2) NOT NULL,
+    genre character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT games_pkey PRIMARY KEY (id),
+    CONSTRAINT games_name_key UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS public.ownedgames
@@ -19,21 +44,46 @@ CREATE TABLE IF NOT EXISTS public.ownedgames
     CONSTRAINT ownedgames_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS public.sales
-(
-    id serial NOT NULL,
-    game_id integer,
-    discount numeric(5, 4),
-    CONSTRAINT sales_pkey PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS public.users
 (
     id serial NOT NULL,
-    nickname character varying(255) COLLATE pg_catalog."default",
-    money_spent numeric(5, 2),
-    CONSTRAINT users_pkey PRIMARY KEY (id)
+    nickname character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    money_spent numeric(10, 2) NOT NULL DEFAULT 0,
+    password character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT users_nickname_key UNIQUE (nickname)
 );
+
+ALTER TABLE IF EXISTS public.admins
+    ADD CONSTRAINT admins_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.developedgames
+    ADD CONSTRAINT developedgames_developer_id_fkey FOREIGN KEY (developer_id)
+    REFERENCES public.developers (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.developedgames
+    ADD CONSTRAINT developedgames_game_id_fkey FOREIGN KEY (game_id)
+    REFERENCES public.games (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.developers
+    ADD CONSTRAINT developers_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
 
 ALTER TABLE IF EXISTS public.ownedgames
     ADD CONSTRAINT game_id FOREIGN KEY (game_id)
@@ -47,13 +97,5 @@ ALTER TABLE IF EXISTS public.ownedgames
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.sales
-    ADD CONSTRAINT sales_game_id_fkey FOREIGN KEY (game_id)
-    REFERENCES public.games (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
 
 END;

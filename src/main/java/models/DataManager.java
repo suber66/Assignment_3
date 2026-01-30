@@ -9,13 +9,11 @@ import java.util.HashMap;
 public class DataManager {
     private HashMap<Integer,User> userByID = new HashMap<>();
     private HashMap<Integer,Game> gameByID = new HashMap<>();
-    static String JDBC_URL = "jdbc:postgresql://localhost:5432/SimpleDB?currentSchema=public&user=postgres&password=0000";
     Connection con = null;
     public DataManager() {
         try {
 
-            con = DriverManager.getConnection(JDBC_URL);
-
+            con = DBConnection.getInstance();
             var selectSQL = "SELECT * FROM users";
             var statement = con.createStatement();
             var resultSet = statement.executeQuery(selectSQL);
@@ -23,8 +21,8 @@ public class DataManager {
                 int id = resultSet.getInt("id");
                 String nickname = resultSet.getString("nickname");
                 double money_spent = resultSet.getDouble("money_spent");
-                User user = new User(id,nickname,money_spent,con);
-                userByID.put(id,user);
+                User user = new User(id, nickname, money_spent, con);
+                userByID.put(id, user);
             }
             selectSQL = "SELECT * FROM games";
             statement = con.createStatement();
@@ -33,8 +31,8 @@ public class DataManager {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 double price = resultSet.getDouble("price");
-                Game game = new Game(id,name,price);
-                gameByID.put(id,game);
+                Game game = new Game(id, name, price);
+                gameByID.put(id, game);
             }
         } catch (
                 SQLException e) {
@@ -47,8 +45,8 @@ public class DataManager {
                     System.out.println("could not close the connection: " + e.getMessage());
                 }
             }
+        }
     }
-}
 
 
     public User getUserByID (int id) {
@@ -60,12 +58,17 @@ public class DataManager {
         return null;
     }
     public Game getGameByID (int id) {
-        return gameByID.get(id);
+        try {
+            return gameByID.get(id);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+        return null;
     }
 
     public void AddOwnedGame (int gameID,int userID) {
         try {
-            con = DriverManager.getConnection(JDBC_URL);
+            con = DBConnection.getInstance();
             var insertSQL = "INSERT INTO ownedgames(game_id, user_id) VALUES (?, ?)";
             var preparedStatement = con.prepareStatement(insertSQL);
             preparedStatement.setInt(1, gameID);
@@ -86,7 +89,7 @@ public class DataManager {
 
     public void AddUser (String user_nickname) {
         try {
-            con = DriverManager.getConnection(JDBC_URL);
+            con = DBConnection.getInstance();
             var insertSQL = "INSERT INTO users(nickname) VALUES (?)";
             var preparedStatement = con.prepareStatement(insertSQL);
             preparedStatement.setString(1, user_nickname);
@@ -105,7 +108,7 @@ public class DataManager {
     }
     public void BuyGame (int gameID,int userID) {
         try {
-            con = DriverManager.getConnection(JDBC_URL);
+            con = DBConnection.getInstance();
             var insertSQL = "INSERT INTO ownedgames(game_id, user_id) VALUES (?, ?)";
             var preparedStatement = con.prepareStatement(insertSQL);
             preparedStatement.setInt(1, gameID);
@@ -138,7 +141,7 @@ public class DataManager {
 
     public void UpdateNickname(int id, String new_nickname){
         try {
-            con = DriverManager.getConnection(JDBC_URL);
+            con = DBConnection.getInstance();
             var updateSQL = "UPDATE users SET nickname = ? WHERE id = ?";
             var preparedStatement = con.prepareStatement(updateSQL);
             preparedStatement.setString(1, new_nickname);
