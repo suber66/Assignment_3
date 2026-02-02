@@ -185,24 +185,18 @@ public class Controller {
 
     static public void ShowAllGames() {
         DataManager dm = new DataManager();
-        for (Game game: dm.getAllGames()) {
-            System.out.println(game);
-
-        }
+        Iterable<Game> games = dm.getAllGames();
+        games.forEach(game -> {System.out.println(game);});
     }
     static public void ShowAllUsers() {
         DataManager dm = new DataManager();
-        for (User user: dm.getAllUsers()) {
-            System.out.println(user);
-
-        }
+        Iterable<User> users = dm.getAllUsers();
+        users.forEach(user -> {System.out.println(user);});
     }
     static public void ShowAllDevelopers() {
         DataManager dm = new DataManager();
-        for (Developer dev: dm.getAllDevelopers()) {
-            System.out.println(dev);
-
-        }
+        Iterable<Developer> developers = dm.getAllDevelopers();
+        developers.forEach(developer -> {System.out.println(developer);});
     }
     static public void AllUserGames(int id) {
         DataManager dm = new DataManager();
@@ -271,6 +265,7 @@ public class Controller {
     }
     static public void DevelopGame (Scanner sc, int developerID) {
         DataManager dm = new DataManager();
+        sc.nextLine();
         System.out.println("Write name for your game: ");
         String gamename = sc.nextLine();
         double gameprice = 0;
@@ -295,7 +290,7 @@ public class Controller {
             default -> "Unspecified";
         };
         dm.AddGame(gamename,gameprice,gamegenre,developerID);
-        System.out.println("Game succesfully added");
+        System.out.println("Game successfully added");
     }
     static public void AddUser (String nickname, String password) {
         DataManager dm = new DataManager();
